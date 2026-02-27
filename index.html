@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Beigner Translator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="top-bar">
+        <h2>🌍 Pro Translator</h2>
+        <button id="themeToggle" class="swap-toggle">🌙</button>
+      </div>
+
+      <div class="controls">
+        <select id="fromLang"></select>
+
+        <button id="swapBtn" class="swap-toggle" data-tooltip="change language">
+          🔄
+        </button>
+
+        <select id="toLang"></select>
+      </div>
+
+      <textarea id="inputText" placeholder="Type or use image..."></textarea>
+
+      <div class="info-bar">
+        <span id="charCount">0 characters</span>
+        <span id="wordCount">0 words</span>
+        <span id="progressText"></span>
+      </div>
+      <div class="loader" id="loaderBar"></div>
+
+      <div class="buttons">
+        <button id="cameraBtn" data-tooltip="Image Upload">📷</button>
+        <input
+          type="file"
+          id="imageInput"
+          accept="image/*"
+          capture="environment"
+          hidden
+        />
+        <button
+          class="translate-btn"
+          id="translateBtn"
+          data-tooltip="Translate Text"
+        >
+          Translate
+        </button>
+        <button
+          class="fast-btn"
+          id="fastModeBtn"
+          data-tooltip="Fast Translation Mode"
+        >
+          Fast Mode ⚡
+        </button>
+        <button id="speakBtn" data-tooltip="Speak Text">🔊</button>
+        <button
+          class="copy-btn"
+          id="copyBtn"
+          data-tooltip="Copy Translated Text"
+        >
+          Copy
+        </button>
+      </div>
+      <div id="outputText" class="output-box">Translated Text....</div>
+      <div id="historyBox">History</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
