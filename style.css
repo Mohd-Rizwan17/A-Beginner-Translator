@@ -339,7 +339,7 @@ button:hover::after {
 .history-item div {
   background: rgba(99, 102, 241, 0.2);
   padding: 4px 8px;
-  width: 108px;
+  width: 115px;
   border-radius: 6px;
   text-align: center;
   align-items: end;
