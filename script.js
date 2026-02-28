@@ -181,6 +181,7 @@ speakBtn.onclick = () => {
 
   if (isSpeaking) {
     window.speechSynthesis.cancel();
+    clearInterval(window._highlightInterval);
     speakBtn.textContent = "🔊";
     isSpeaking = false;
     return;
@@ -190,13 +191,14 @@ speakBtn.onclick = () => {
   speechInstance = new SpeechSynthesisUtterance(fullText);
   speechInstance.lang = toLang.value;
 
+  // adjust speech speed if needed
+  speechInstance.rate = 1;
+
   const wordSpans = outputText.querySelectorAll("span");
   currentWordIndex = 0;
 
   let boundaryWorking = false;
-  let fallbackInterval;
 
-  // ===== Real Boundary (Desktop)
   speechInstance.onboundary = (event) => {
     if (event.name !== "word") return;
 
@@ -205,32 +207,51 @@ speakBtn.onclick = () => {
     if (currentWordIndex >= wordSpans.length) return;
 
     wordSpans.forEach((w) => w.classList.remove("highlight-word"));
-    wordSpans[currentWordIndex].classList.add("highlight-word");
+
+    const currentSpan = wordSpans[currentWordIndex];
+    currentSpan.classList.add("highlight-word");
+
+    // scroll inside output box
+    currentSpan.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
 
     currentWordIndex++;
   };
 
-  // ===== Fallback (Mobile)
   speechInstance.onstart = () => {
+    // small delay to detect boundary support
     setTimeout(() => {
       if (!boundaryWorking) {
-        fallbackInterval = setInterval(() => {
+        // estimate speed based on speech rate
+        const baseSpeed = 350;
+        const intervalSpeed = baseSpeed / speechInstance.rate;
+
+        window._highlightInterval = setInterval(() => {
           if (currentWordIndex >= wordSpans.length) {
-            clearInterval(fallbackInterval);
+            clearInterval(window._highlightInterval);
             return;
           }
 
           wordSpans.forEach((w) => w.classList.remove("highlight-word"));
-          wordSpans[currentWordIndex].classList.add("highlight-word");
+
+          const currentSpan = wordSpans[currentWordIndex];
+          currentSpan.classList.add("highlight-word");
+
+          currentSpan.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
 
           currentWordIndex++;
-        }, 400); // adjust speed if needed
+        }, intervalSpeed);
       }
-    }, 800);
+    }, 700);
   };
 
   speechInstance.onend = () => {
-    clearInterval(fallbackInterval);
+    clearInterval(window._highlightInterval);
     wordSpans.forEach((w) => w.classList.remove("highlight-word"));
     speakBtn.textContent = "🔊";
     isSpeaking = false;
