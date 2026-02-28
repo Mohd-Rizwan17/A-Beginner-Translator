@@ -274,15 +274,16 @@ imageInput.onchange = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  inputText.value = "Scanning image... Please wait...";
+  inputText.value = "Detecting language & scanning image...";
 
   const worker = Tesseract.createWorker();
 
   await worker.load();
-  await worker.loadLanguage("eng+hin+urd+arab");
-  await worker.initialize("eng+hin+urd+arab");
 
-  // Important configuration for better paragraph detection
+  // Load multiple languages
+  await worker.loadLanguage("eng+hin+urd+ara");
+  await worker.initialize("eng+hin+urd+ara");
+
   await worker.setParameters({
     tessedit_pageseg_mode: Tesseract.PSM.AUTO,
     preserve_interword_spaces: "1",
@@ -290,9 +291,29 @@ imageInput.onchange = async (e) => {
 
   const result = await worker.recognize(file);
 
-  inputText.value = result.data.text;
+  let rawText = result.data.text;
+
+  // 🧠 Smart Language Guess
+  let detectedLang = "English";
+
+  if (/[\u0600-\u06FF]/.test(rawText)) {
+    detectedLang = "Urdu / Arabic";
+  } else if (/[\u0900-\u097F]/.test(rawText)) {
+    detectedLang = "Hindi";
+  }
+
+  console.log("Detected Language:", detectedLang);
+
+  // ✨ Better Paragraph Formatting
+  let formattedText = rawText
+    .replace(/\n{2,}/g, "\n\n") // remove extra blank lines
+    .replace(/([a-z])\n([a-z])/gi, "$1 $2") // fix broken lines
+    .replace(/\s{2,}/g, " ") // remove extra spaces
+    .trim();
+
+  inputText.value = formattedText;
+
+  charCount.textContent = formattedText.length + " characters";
 
   await worker.terminate();
-
-  charCount.textContent = inputText.value.length + " characters";
 };
