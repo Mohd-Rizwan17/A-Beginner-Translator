@@ -88,7 +88,20 @@ fastModeBtn.onclick = () => {
 function saveToHistory(original, translated) {
   const div = document.createElement("div");
   div.className = "history-item";
-  div.innerHTML = `<strong>${original.slice(0, 40)}...</strong><br>${translated.slice(0, 60)}...`;
+
+  const fromLanguage = languages[fromLang.value];
+  const toLanguage = languages[toLang.value];
+
+  div.innerHTML = `
+    <div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">
+      ${fromLanguage} → ${toLanguage}
+    </div>
+
+    <strong>${original.slice(0, 60)}...</strong>
+    <br>
+    ${translated.slice(0, 80)}...
+  `;
+
   historyBox.prepend(div);
 }
 

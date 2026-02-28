@@ -336,8 +336,13 @@ button:hover::after {
   border-radius: 6px;
 }
 
-.history-item {
-  padding: 6px 0;
+.history-item div {
+  background: rgba(99, 102, 241, 0.2);
+  padding: 4px 8px;
+  width: 108px;
+  border-radius: 6px;
+  text-align: center;
+  align-items: end;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
