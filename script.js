@@ -192,7 +192,7 @@ speakBtn.onclick = () => {
   speechInstance.lang = toLang.value;
 
   // adjust speech speed if needed
-  speechInstance.rate = 1;
+  speechInstance.rate = 0.9;
 
   const wordSpans = outputText.querySelectorAll("span");
   currentWordIndex = 0;
