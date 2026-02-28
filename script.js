@@ -191,50 +191,55 @@ speakBtn.onclick = () => {
   speechInstance.lang = toLang.value;
 
   const wordSpans = outputText.querySelectorAll("span");
-  const container = outputText;
-
   currentWordIndex = 0;
 
+  let boundaryWorking = false;
+  let fallbackInterval;
+
+  // ===== Real Boundary (Desktop)
   speechInstance.onboundary = (event) => {
     if (event.name !== "word") return;
+
+    boundaryWorking = true;
 
     if (currentWordIndex >= wordSpans.length) return;
 
     wordSpans.forEach((w) => w.classList.remove("highlight-word"));
-
-    const currentSpan = wordSpans[currentWordIndex];
-    if (!currentSpan) return;
-
-    currentSpan.classList.add("highlight-word");
-
-    const container = outputText;
-
-    const containerRect = container.getBoundingClientRect();
-    const spanRect = currentSpan.getBoundingClientRect();
-
-    if (spanRect.bottom > containerRect.bottom) {
-      container.scrollTop += spanRect.bottom - containerRect.bottom;
-    }
-
-    if (spanRect.top < containerRect.top) {
-      container.scrollTop -= containerRect.top - spanRect.top;
-    }
+    wordSpans[currentWordIndex].classList.add("highlight-word");
 
     currentWordIndex++;
   };
 
+  // ===== Fallback (Mobile)
+  speechInstance.onstart = () => {
+    setTimeout(() => {
+      if (!boundaryWorking) {
+        fallbackInterval = setInterval(() => {
+          if (currentWordIndex >= wordSpans.length) {
+            clearInterval(fallbackInterval);
+            return;
+          }
+
+          wordSpans.forEach((w) => w.classList.remove("highlight-word"));
+          wordSpans[currentWordIndex].classList.add("highlight-word");
+
+          currentWordIndex++;
+        }, 400); // adjust speed if needed
+      }
+    }, 800);
+  };
+
   speechInstance.onend = () => {
+    clearInterval(fallbackInterval);
     wordSpans.forEach((w) => w.classList.remove("highlight-word"));
     speakBtn.textContent = "🔊";
     isSpeaking = false;
   };
 
   window.speechSynthesis.speak(speechInstance);
-
   speakBtn.textContent = "⏹ Stop";
   isSpeaking = true;
 };
-
 /* ===== IMAGE ===== */
 
 const cameraBtn = document.getElementById("cameraBtn");

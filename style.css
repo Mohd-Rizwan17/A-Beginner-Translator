@@ -35,8 +35,8 @@ body::before {
 .app {
   width: 100%;
   max-width: 1000px; /* 1200 se kam */
-  /* min-height: 85vh; */
-  height: 85vh;
+  min-height: 85vh;
+  /* height: 85vh; */
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(25px);
@@ -215,7 +215,7 @@ button:hover::after {
 
 .highlight-word {
   background: #facc15;
-  padding: 4px 6px;
+  /* padding: 4px 6px; */
   border-radius: 6px;
   color: black;
   transition: 0.2s ease;
