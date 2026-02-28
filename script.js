@@ -274,15 +274,25 @@ imageInput.onchange = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  inputText.value = "Scanning image...";
+  inputText.value = "Scanning image... Please wait...";
 
-  const result = await Tesseract.recognize(
-    file,
-    "eng", // force english
-    { logger: (m) => console.log(m) },
-  );
+  const worker = Tesseract.createWorker();
+
+  await worker.load();
+  await worker.loadLanguage("eng+hin+urd+arab");
+  await worker.initialize("eng+hin+urd+arab");
+
+  // Important configuration for better paragraph detection
+  await worker.setParameters({
+    tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+    preserve_interword_spaces: "1",
+  });
+
+  const result = await worker.recognize(file);
 
   inputText.value = result.data.text;
+
+  await worker.terminate();
 
   charCount.textContent = inputText.value.length + " characters";
 };
